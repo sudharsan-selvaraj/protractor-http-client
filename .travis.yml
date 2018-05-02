@@ -5,3 +5,7 @@ node_js:
   - "6"
   - "5"
   - "4"
+script:
+  - npm start &
+  - npm run start-auth &
+  - npm test
