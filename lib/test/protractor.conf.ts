@@ -1,7 +1,10 @@
-import { Config } from "protractor";
+import {Config} from "protractor";
 
 export let config:Config = {
-    specs: ["tests.js"],
+    specs: ["tests.js","noAuth.spec.js"],
+    jasmineNodeOpts: {
+        defaultTimeoutInterval: 120000
+    },
     capabilities: {
         browserName: "phantomjs",
         'phantomjs.binary.path': require('phantomjs-prebuilt').path,
