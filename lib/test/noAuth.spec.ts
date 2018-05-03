@@ -5,27 +5,27 @@ describe("Test registeredEndpoints with no authentication", function () {
     let http:HttpClient,
         endPoints = {
             getProducts: {
-                path: "/products",
+                path: "/no-auth/products",
                 method: "GET"
             },
             getProductById: {
-                path: "/products/{id}",
+                path: "/no-auth/products/{id}",
                 method: "GET"
             },
             createProduct: {
-                path: "/products",
+                path: "/no-auth/products",
                 method: "POST"
             },
             updateProductUsingPut: {
-                path: "/products/{id}",
+                path: "/no-auth/products/{id}",
                 method: "PUT"
             },
             updateProductUsingPatch: {
-                path: "/products/{id}",
+                path: "/no-auth/products/{id}",
                 method: "PATCH"
             },
             deleteProduct: {
-                path: "/products/{id}",
+                path: "/no-auth/products/{id}",
                 method: "DELETE"
             }
         };
@@ -160,7 +160,6 @@ describe("Test registeredEndpoints with no authentication", function () {
 
         expect(deleteResponse.statusCode).toEqual(200);
         expect(deleteResponse.jsonBody).toEqual({});
-
         expect(productList.jsonBody.pluckFromArrayOfObject("id")).not.toContain(2);
     });
 
