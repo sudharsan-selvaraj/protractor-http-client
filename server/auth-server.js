@@ -1,6 +1,6 @@
 const fs = require('fs');
 const jsonServer = require('json-server');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const server = jsonServer.create();
 const router = jsonServer.router('./database.json');

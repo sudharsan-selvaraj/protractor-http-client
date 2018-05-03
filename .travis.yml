@@ -6,8 +6,4 @@ node_js:
   - "5"
   - "4"
 script:
-  - npm start &
-  - sleep 5
-  - npm run start-auth &
-  - sleep 5
-  - npm test
+  - gulp
