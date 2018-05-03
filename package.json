@@ -14,8 +14,8 @@
   "homepage": "https://github.com/marcodave/protractor-http-client",
   "scripts": {
     "compile": "tsc",
-    "pretest": "npm run compile",
-    "test": "webdriver-manager update --standalone --chrome=false --gecko=false && protractor dist/test/protractor.conf.js",
+    "pretest": "tsc",
+    "test": "webdriver-manager update && protractor dist/test/protractor.conf.js",
     "prestart" : "node server/initDB.js",
     "start" : "json-server --port 5000 --watch server/database.json",
     "start-auth" : "node server/server.js"
