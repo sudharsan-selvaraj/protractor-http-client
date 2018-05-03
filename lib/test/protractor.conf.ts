@@ -1,7 +1,7 @@
 import {Config} from "protractor";
 
 export let config:Config = {
-    specs: ["*.js"],
+    specs: ["tests.js","noAuth.spec.js"],
     jasmineNodeOpts: {
         defaultTimeoutInterval: 120000
     },
