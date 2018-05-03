@@ -1,6 +1,6 @@
 const fs = require('fs');
 const jsonServer = require('json-server');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 
 const server = jsonServer.create();
 const router = jsonServer.router('./database.json');
@@ -66,6 +66,6 @@ server.use(/^(?!\/auth).*$/, function (req, res, next) {
 
 server.use(router);
 
-server.listen(3000, function () {
+server.listen(5001, function () {
     console.log('Run Auth API Server')
 });

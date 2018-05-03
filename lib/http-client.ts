@@ -25,16 +25,16 @@ interface AuthOptions {
     bearer?:string | (() => string);
 }
 
-let AUTH_TYPES  = {
-    NO_AUTH : 0,
-    BASIC_AUTH : 1,
-    TOKEN_AUTH : 2,
-};
+enum AUTH_TYPES {
+    NO_AUTH = 0,
+    BASIC_AUTH = 1,
+    TOKEN_AUTH = 2,
+}
 
 export class HttpClient {
     private baseUrl:string;
     private _failOnHttpError:boolean = false;
-    private authenticationMechanism:any = AUTH_TYPES.NO_AUTH;
+    private authenticationMechanism:AUTH_TYPES = AUTH_TYPES.NO_AUTH;
     private authObject:AuthOptions = {};
     [key:string]:any; //index signature for accessing dynamically generated methods from test.
 
