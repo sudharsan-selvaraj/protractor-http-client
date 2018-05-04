@@ -1,68 +1,37 @@
 import {HttpClient} from "../http-client";
+import {browser} from "protractor";
 
 describe("Test registeredEndpoints with no authentication", function () {
 
     let http:HttpClient,
         endPoints = {
             getProducts: {
-                path: "/no-auth/products",
+                path: "/no-auth/products1",
                 method: "GET"
             },
             getProductById: {
-                path: "/no-auth/products/{id}",
+                path: "/no-auth/products1/{id}",
                 method: "GET"
             },
             createProduct: {
-                path: "/no-auth/products",
+                path: "/no-auth/products1",
                 method: "POST"
             },
             updateProductUsingPut: {
-                path: "/no-auth/products/{id}",
+                path: "/no-auth/products1/{id}",
                 method: "PUT"
             },
             updateProductUsingPatch: {
-                path: "/no-auth/products/{id}",
+                path: "/no-auth/products1/{id}",
                 method: "PATCH"
             },
             deleteProduct: {
-                path: "/no-auth/products/{id}",
+                path: "/no-auth/products1/{id}",
                 method: "DELETE"
             }
         };
-    let expectedResponse = [
-        {
-            "id": 1,
-            "name": "Product001",
-            "cost": 10,
-            "quantity": 1000,
-            "locationId": 1,
-            "familyId": 1
-        },
-        {
-            "id": 2,
-            "name": "Product002",
-            "cost": 20,
-            "quantity": 2000,
-            "locationId": 1,
-            "familyId": 2
-        },
-        {
-            "id": 3,
-            "name": "Product003",
-            "cost": 30,
-            "quantity": 3000,
-            "locationId": 3,
-            "familyId": 2
-        },
-        {
-            "id": 4,
-            "name": "Product004",
-            "cost": 40,
-            "quantity": 4000,
-            "locationId": 2,
-            "familyId": 3
-        }
-    ];
+    let expectedResponse = browser.params.db.products1;
+    
     beforeAll(function () {
         http = new HttpClient("http://localhost:5000")
             .registerEndpoints(endPoints);
@@ -74,7 +43,7 @@ describe("Test registeredEndpoints with no authentication", function () {
         expect(actualResponse.statusCode).toEqual(200);
         expect(actualResponse.jsonBody.get("0")).toEqual(expectedResponse[0]);
         expect(actualResponse.jsonBody.deepGet("1.name")).toEqual(expectedResponse[1].name);
-        expect(actualResponse.jsonBody.pluckFromArrayOfObject("name")).toEqual(expectedResponse.map(p => p["name"]));
+        expect(actualResponse.jsonBody.pluckFromArrayOfObject("name")).toEqual(expectedResponse.map((result:any) => result["name"]));
         expect(actualResponse.jsonBody.getArrayCount()).toEqual(4);
 
         expect(actualResponse.jsonBody.pluckFromArrayOfObject("locationId").getSortedArray()).toEqual([1, 1, 2, 3]);

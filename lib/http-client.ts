@@ -36,6 +36,7 @@ export class HttpClient {
     private _failOnHttpError:boolean = false;
     private authenticationMechanism:AUTH_TYPES = AUTH_TYPES.NO_AUTH;
     private authObject:AuthOptions = {};
+    private authToken:string = "";
     [key:string]:any; //index signature for accessing dynamically generated methods from test.
 
     constructor(baseUrl?: string) {
@@ -54,14 +55,15 @@ export class HttpClient {
         this.authenticationMechanism = AUTH_TYPES.BASIC_AUTH;
         this.authObject.username = userName;
         this.authObject.password = password;
-        this.authObject.bearer = "";
     }
 
     withBearerToken(token:string) {
         this.authenticationMechanism = AUTH_TYPES.TOKEN_AUTH;
-        this.authObject.username = "";
-        this.authObject.password = "";
-        this.authObject.bearer = token;
+        this.authToken = token;
+    }
+
+    withNoAuth() {
+        this.authenticationMechanism = AUTH_TYPES.NO_AUTH;
     }
 
     request(options: request.Options): ResponsePromise {
@@ -164,8 +166,13 @@ export class HttpClient {
             options.json = body;
         }
 
-        if (this.authenticationMechanism == AUTH_TYPES.BASIC_AUTH || this.authenticationMechanism == AUTH_TYPES.TOKEN_AUTH) {
+        if (this.authenticationMechanism == AUTH_TYPES.BASIC_AUTH) {
             options.auth = this.authObject;
+        } else if(this.authenticationMechanism == AUTH_TYPES.TOKEN_AUTH) {
+            options.auth = {
+                bearer : this.authToken
+            };
+
         }
 
         return this.request(options);
