@@ -1,14 +1,15 @@
 const fs = require('fs');
 const jsonServer = require('json-server');
 const jwt = require('jsonwebtoken');
-
+const basicAuth = require('basic-auth');
 const server = jsonServer.create();
-const router = jsonServer.router('./database.json');
+const router = jsonServer.router(__dirname +'/database.json');
 const userdb = JSON.parse(fs.readFileSync(__dirname + '/users.json', 'UTF-8'));
 
 //server.use(bodyParser.urlencoded({extended: true}))
 //server.use(bodyParser.json())
 server.use(jsonServer.defaults());
+
 
 const SECRET_KEY = '123456789';
 
@@ -27,45 +28,60 @@ function verifyToken(token) {
 }
 
 // Check if the user exists in database
-function isAuthenticated(email, password) {
+function isAuthenticated(username, password) {
     return userdb.users.findIndex(function (user) {
-        return (user.email === email && user.password === password) !== -1;
+        return (user.name === username && user.password === password) !== -1;
     })
 }
 
 
+server.use(jsonServer.defaults());
+
 server.post('/auth/login', function (req, res) {
-    const email = req.body.email,
-        password = req.body.password;
-    if (isAuthenticated({email, password}) === false) {
+    const username = req.body ? req.body.username : "",
+        password = req.body ? req.body.password : "";
+    if (!isAuthenticated({username, password})) {
         const status = 401;
-        const message = 'Incorrect email or password';
+        const message = 'Incorrect username or password';
         res.status(status).json({status: message});
         return
     }
-    const access_token = createToken(email, password);
+    const access_token = createToken(username, password);
     res.status(200).json({access_token})
 });
 
-server.use(/^(?!\/auth).*$/, function (req, res, next) {
-    if (req.headers.authorization === undefined || req.headers.authorization.split(' ')[0] !== 'Bearer') {
-        const status = 401;
-        const message = 'Error in authorization format';
-        res.status(status).json({status, message});
-        return
+server.use(/^(?!(\/auth|\/no-auth)).*$/, function (req, res, next) {
+    console.log("no-auth 1");
+    var status, message;
+    if (!req.headers.authorization) {
+        status = 401;
+        message = 'Error in authorization format';
+        return res.status(status).json({status, message});
+    } else if (req.headers.authorization.split(' ')[0] !== 'Bearer') {
+        try {
+            verifyToken(req.headers.authorization.split(' ')[1]);
+        } catch (err) {
+            status = 401;
+            message = 'Error access_token is revoked';
+            return res.status(status).json({status: message});
+        }
+    } else if (req.headers.authorization.split(' ')[0] !== 'Basic') {
+        var credentials = basicAuth(req.headers.authorization),
+            username = credentials.user || credentials.username,
+            password = credentials.password || credentials.pass;
+        if (isAuthenticated({username, password}) === false) {
+            status = 401;
+            message = 'Incorrect email or password';
+            return res.status(status).json({status: message});
+        }
     }
-    try {
-        verifyToken(req.headers.authorization.split(' ')[1]);
-        next()
-    } catch (err) {
-        const status = 401;
-        const message = 'Error access_token is revoked';
-        res.status(status).json({status: message});
-    }
-})
+    next();
+});
+
+server.use('/no-auth', router);
 
 server.use(router);
 
-server.listen(5001, function () {
+server.listen(5000, function () {
     console.log('Run Auth API Server')
 });

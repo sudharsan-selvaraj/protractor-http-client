@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/jasminewd2": "2.x",
     "@types/request": "2.47.0",
+    "basic-auth": "^2.0.0",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-json-srv": "^1.2.0",

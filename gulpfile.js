@@ -27,7 +27,7 @@ gulp.task("clean", function () {
 });
 
 
-gulp.task('test', ['start'], function () {
+gulp.task('test', ['start-server'], function () {
     var cmd = spawn('npm', ['test'], {stdio: 'inherit'});
     return cmd.on('exit', function (code) {
         process.exit(code);
@@ -46,9 +46,9 @@ gulp.task("build", function () {
 });
 
 gulp.task("init-db", function () {
-    return nodemon({
-        script: "server/initDB.js",
-        watch: ["!server/*.*"]
+    var cmd = spawn('node', ["server/initDB.js"], {stdio: 'inherit'});
+    return cmd.on('exit', function (code) {
+       console.log("Database initialised");
     });
 });
 
@@ -60,10 +60,12 @@ gulp.task("json-server", function () {
 gulp.task("auth-server", function () {
     return nodemon({
         script: "server/auth-server.js",
-        watch: ["!server/*.*"]
-    });
+        ignore: ["/*.*","/**/*.*"]
+    }).on("error",function (err) {
+        console.log(err);
+    })
 });
 
-gulp.task("start", gulpSequence('init-db','json-server', 'auth-server'));
+gulp.task("start-server", gulpSequence('init-db','auth-server'));
 
 gulp.task('default', gulpSequence('clean', 'build', 'test'));
